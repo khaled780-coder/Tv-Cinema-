@@ -1,0 +1,10 @@
+{
+  "name": "القنوات الفضائية",
+  "short_name": "القنوات",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f1115",
+  "theme_color": "#0f1115",
+  "lang": "ar",
+  "dir": "rtl"
+}
