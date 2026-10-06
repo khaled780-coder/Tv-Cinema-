@@ -1,1 +1,574 @@
 
+name: Build Flutter APK
+name: Build Flutter APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+runs
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+namename: Build Android APK
+
+on:
+  Skip to content
+Test-
+Repository navigation
+Code
+Issues
+Pull requests
+Build Android APK
+Update build-apk workflow for Java and Node.js setup #5
+Annotations
+1 error, 2 warnings, and 1 notice
+build
+failed 2 minutes ago in 22s
+2s
+0s
+1s
+6s
+0s
+9s
+Run npm init -y
+Wrote to /home/runner/work/Test-/Test-/package.json:
+
+{
+  "name": "test-",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+
+
+
+npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated glob@9.3.5: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+added 99 packages, and audited 100 packages in 7s
+
+11 packages are looking for funding
+  run `npm fund` for details
+
+2 vulnerabilities (1 high, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+✔ Creating capacitor.config.json in /home/runner/work/Test-/Test- in 1.09ms
+[success] capacitor.config.json created!
+
+Next steps: 
+https://capacitorjs.com/docs/getting-started#where-to-go-next
+✔ Adding native android project in android in 58.09ms
+✔ add in 58.86ms
+✖ copy android - failed!
+0s
+0s
+0s
+1s
+0sSkip to content
+Test-
+Repository navigation
+Code
+Issues
+Pull requests
+Build Android APK
+Update build-apk workflow for Java and Node.js setup #5
+Annotations
+1 error, 2 warnings, and 1 notice
+build
+failed 2 minutes ago in 22s
+2s
+0s
+1s
+6s
+0s
+9s
+Run npm init -y
+Wrote to /home/runner/work/Test-/Test-/package.json:
+
+{
+  "name": "test-",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+
+
+
+npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated glob@9.3.5: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+added 99 packages, and audited 100 packages in 7s
+
+11 packages are looking for funding
+  run `npm fund` for details
+
+2 vulnerabilities (1 high, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+✔ Creating capacitor.config.json in /home/runner/work/Test-/Test- in 1.09ms
+[success] capacitor.config.json created!
+
+Next steps: 
+https://capacitorjs.com/docs/getting-started#where-to-go-next
+✔ Adding native android project in android in 58.09ms
+✔ add in 58.86ms
+✖ copy android - failed!
+0s
+0s
+0s
+1s
+0s
+0s
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Java JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Set up Node.js 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Verify and Prepare Web Assets
+      run: |
+        if [ ! -f "index.html" ]; then
+          echo "Error: index.html not found!"
+          exit 1
+        fi
+        mkdir -p www
+        cp index.html www/
+
+    - name: Setup Capacitor and Build Android
+      run: |
+        npm init -y
+        npm install @capacitor/core @capacitor/cli @capacitor/android
+        npx cap init "PrayerTimes" "com.prayer.app" --web-dir www
+        npx cap add android
+        npx cap sync android
+
+    - name: Build Debug APK
+      run: |
+        cd android
+        chmod +x gradlew
+        ./gradlew assembleDebug
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: PrayerTimes-APK
+        path: android/app/build/outputs/apk/debug/app-debug.apk
+
+0s
+:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Java JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Set up Node.js 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Verify index.html
+      run: |
+        if [ ! -f "index.html" ]; then
+          echo "Error: index.html not found!"
+          exit 1
+        fi
+
+    - name: Setup Capacitor and Android Project
+      run: |
+        npm init -y
+        npm install @capacitor/core @capacitor/cli @capacitor/android
+        npx cap init "PrayerTimes" "com.prayer.app" --web-dir .
+        npx cap add android
+        npx cap sync android
+
+    - name: Build Debug APK
+      run: |
+        cd android
+        chmod +x gradlew
+        ./gradlew assembleDebug
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: PrayerTimes-APK
+        path: android/app/build/outputs/apk/debug/app-debug.apk
+
+    - name: Set up Java JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
+    - name: Generate Android configuration files
+      run: flutter create . --platforms=android --org=com.salat.app
+
+    - name: Add Permissions to AndroidManifest
+      run: |
+        MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
+        PERMISSIONS='<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>'
+        sed -i "/<manifest/a \    $PERMISSIONS" $MANIFEST_PATH
+
+    - name: Get Dependencies
+      run: flutter pub get
+
+    - name: Build APK
+      run: flutter build apk --release
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+
+on:branches
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Java JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
+    - name: Generate Android configuration files
+      run: flutter create . --platforms=android --org=com.salat.app
+
+    - name: Add Location Permissions to AndroidManifest
+      run: |
+        MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
+        PERMISSIONS='<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>'
+        sed -i "/<manifest/a \    $PERMISSIONS" $MANIFEST_PATH
+
+    - name: Get Dependencies
+      run: flutter pub get
+
+    - name: Build APK
+      run: flutter build apk --release
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Set up Java JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Verify index.html exists
+      run: |
+        if [ ! -f "index.html" ]; then
+          echo "Error: index.html not found in root directory!"
+          exit 1
+        fi
+
+    - name: Build Web Application & Capacitor Android
+      run: |
+        npm init -y
+        npm install @capacitor/core @capacitor/cli @capacitor/android
+        npx cap init "PrayerTimes" "com.prayer.app" --web-dir .
+        npx cap add android
+        npx cap sync android
+
+    - name: Build Debug APK
+      run: |
+        cd android
+        chmod +x gradlew
+        ./gradlew assembleDebug
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: PrayerTimes-APK
+        path: android/app/build/outputs/apk/debug/app-debug.apk
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Verify and Prepare Web Assets
+        run: |
+          set -e
+
+          if [ ! -f "index.html" ]; then
+            echo "ERROR: index.html not found!"
+            exit 1
+          fi
+
+          rm -rf www
+          mkdir -p www
+          cp index.html www/
+
+          echo "Web assets prepared successfully."
+
+      - name: Install Capacitor
+        run: |
+          set -e
+
+          npm init -y
+
+          npm install \
+            @capacitor/core@6 \
+            @capacitor/cli@6 \
+            @capacitor/android@6
+
+      - name: Configure Capacitor
+        run: |
+          set -e
+
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.prayer.app",
+            "appName": "PrayerTimes",
+            "webDir": "www"
+          }
+          EOF
+
+      - name: Add Android Platform
+        run: |
+          set -e
+
+          npx cap add android
+          npx cap sync android
+
+      - name: Clean Gradle
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew clean --no-daemon
+
+      - name: Build Debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+
+          ./gradlew assembleDebug \
+            --no-daemon \
+            --stacktrace
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PrayerTimes-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Verify and Prepare Web Assets
+        run: |
+          set -e
+
+          if [ ! -f "index.html" ]; then
+            echo "ERROR: index.html not found!"
+            exit 1
+          fi
+
+          rm -rf www
+          mkdir -p www
+          cp index.html www/
+
+          echo "Web assets prepared successfully."
+
+      - name: Install Capacitor
+        run: |
+          set -e
+
+          npm init -y
+
+          npm install \
+            @capacitor/core@6 \
+            @capacitor/cli@6 \
+            @capacitor/android@6
+
+      - name: Configure Capacitor
+        run: |
+          set -e
+
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.prayer.app",
+            "appName": "PrayerTimes",
+            "webDir": "www"
+          }
+          EOF
+
+      - name: Add Android Platform
+        run: |
+          set -e
+
+          npx cap add android
+          npx cap sync android
+
+      - name: Clean Gradle
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew clean --no-daemon
+
+      - name: Build Debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+
+          ./gradlew assembleDebug \
+            --no-daemon \
+            --stacktrace
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PrayerTimes-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
