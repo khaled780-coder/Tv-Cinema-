@@ -1,0 +1,46 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. جلب الكود من المستودع (تم تحديثه لتفادي تحذير Node 20)
+      - name: Checkout Code
+        uses: actions/checkout@v4.2.2
+
+      # 2. إعداد بيئة Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 3. إعداد بيئة Java لبناء الأندرويد
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # 4. تثبيت Cordova وإنشاء تطبيق أندرويد من ملفات الموقع
+      - name: Install Cordova and Build Android App
+        run: |
+          npm install -g cordova
+          cordova create build_app com.tv.app "القنوات الفضائية"
+          rm -rf build_app/www/*
+          cp index.html manifest.json sw.js build_app/www/ 2>/dev/null || cp index.html build_app/www/
+          cd build_app
+          cordova platform add android
+          cordova build android --debug
+
+      # 5. رفع ملف الـ APK النهائي إلى قسم Artifacts
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Channels-App-APK
+          path: build_app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
