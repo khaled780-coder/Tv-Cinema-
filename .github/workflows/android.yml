@@ -10,24 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. جلب الكود من المستودع
       - name: Checkout Code
         uses: actions/checkout@v4.2.2
 
-      # 2. إعداد بيئة Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # 3. إعداد بيئة Java
       - name: Setup Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      # 4. تثبيت Cordova وربط الصورة كأيقونة للتطبيق
       - name: Install Cordova and Build Android App
         run: |
           npm install -g cordova
@@ -35,7 +31,6 @@ jobs:
           rm -rf build_app/www/*
           cp index.html manifest.json sw.js build_app/www/ 2>/dev/null || cp index.html build_app/www/
           
-          # نسخ الشعار وإضافته للأندرويد
           if [ -f "icon.png" ]; then
             cp icon.png build_app/www/icon.png
             sed -i '/<\/widget>/i \    <icon src="www/icon.png" />' build_app/config.xml
@@ -45,7 +40,6 @@ jobs:
           cordova platform add android
           cordova build android --debug
 
-      # 5. رفع ملف الـ APK مع الأيقونة الجديدة
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
