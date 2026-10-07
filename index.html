@@ -1,44 +1,250 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0f1115"><link rel="manifest" href="manifest.json">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0f1115">
+<link rel="manifest" href="manifest.json">
 <title>📺 القنوات الفضائية</title>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#0f1115;color:#fff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0f1115;color:#fff;user-select:none}
 header{position:sticky;top:0;z-index:10;background:#171a21;border-bottom:1px solid #292e38;padding:12px}
-.logo{text-align:center;font-size:22px;font-weight:bold;margin-bottom:12px}.countries-title{font-size:14px;color:#aaa;margin-bottom:8px}
-.countries{display:flex;gap:8px;overflow-x:auto;white-space:nowrap}.country{flex:0 0 auto;background:#242934;color:#ddd;border:1px solid #343a46;border-radius:20px;padding:9px 14px;font-size:14px;cursor:pointer}.country.active{background:#e50914;border-color:#e50914;color:#fff}
-.content{padding:15px}.country-name{font-size:20px;font-weight:bold;margin-bottom:15px}.channels{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.channel{background:#191c23;border:1px solid #292e38;border-radius:12px;padding:12px;cursor:pointer}.channel:hover{transform:translateY(-2px);background:#222630}
-.channel img{width:100%;height:90px;object-fit:contain;background:#101217;border-radius:8px;margin-bottom:8px}.channel-name{text-align:center;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.loading,.error{text-align:center;padding:40px 10px;color:#aaa}
-.player-container{display:none;position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.96);align-items:center;justify-content:center;flex-direction:column;padding:15px}.player-container.show{display:flex}.player-box{width:95%;max-width:900px}
-video{width:100%;max-height:70vh;background:#000;border-radius:10px}.player-title{margin-bottom:10px;text-align:center;font-size:17px}.player-status{text-align:center;color:#aaa;margin-top:10px;font-size:14px}
-.player-buttons{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:15px}.player-btn{border:0;color:#fff;padding:10px 18px;border-radius:8px;cursor:pointer;font-size:14px}.close-player{background:#e50914}.official-btn{background:#1976d2;display:none}.official-btn.show{display:inline-block}
-</style></head>
+.logo{text-align:center;font-size:22px;font-weight:bold;margin-bottom:12px;background:linear-gradient(45deg,#e50914,#ffb703);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.countries-title{font-size:13px;color:#8b949e;margin-bottom:8px}
+.countries{display:flex;gap:8px;overflow-x:auto;white-space:nowrap;padding-bottom:4px;scrollbar-width:none}
+.countries::-webkit-scrollbar{display:none}
+.country{flex:0 0 auto;background:#242934;color:#ddd;border:1px solid #343a46;border-radius:20px;padding:8px 16px;font-size:14px;cursor:pointer;transition:all .2s}
+.country.active{background:#e50914;border-color:#e50914;color:#fff;font-weight:bold}
+.content{padding:15px}
+.country-name{font-size:18px;font-weight:bold;margin-bottom:15px;color:#ffb703;border-bottom:1px solid #292e38;padding-bottom:6px}
+.channels{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.channel{background:#191c23;border:1px solid #292e38;border-radius:12px;padding:10px;cursor:pointer;text-align:center;transition:transform .15s,background .15s}
+.channel:active{transform:scale(.97);background:#222630}
+.channel img{width:100%;height:85px;object-fit:contain;background:#101217;border-radius:8px;margin-bottom:8px}
+.channel-name{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.loading,.error{text-align:center;padding:50px 10px;color:#8b949e;font-size:14px}
+
+/* واجهة المشغل العصري */
+.xp-player-container{display:none;position:fixed;inset:0;z-index:9999;background:#000;flex-direction:column;justify-content:space-between}
+.xp-player-container.show{display:flex}
+.xp-header{position:absolute;top:0;left:0;right:0;padding:15px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to bottom,rgba(0,0,0,.85),transparent);z-index:10000}
+.xp-title{font-size:16px;font-weight:bold;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.xp-close{background:rgba(255,255,255,.15);border:0;color:#fff;width:38px;height:38px;border-radius:50%;font-size:20px;cursor:pointer;backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center}
+.xp-close:active{background:rgba(229,9,20,.8)}
+.xp-video-wrapper{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000}
+video{width:100%;max-height:100vh;object-fit:contain}
+.xp-status{position:absolute;bottom:25px;left:50%;transform:translateX(-50%);background:rgba(23,26,33,.85);color:#ffb703;padding:8px 20px;border-radius:20px;font-size:13px;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);pointer-events:none}
+</style>
+</head>
 <body>
-<header><div class="logo">📺 القنوات الفضائية</div><div class="countries-title">🌍 الدول</div><div id="countries" class="countries"></div></header>
-<main class="content"><div id="countryName" class="country-name">اختر دولة</div><div id="channels" class="channels"></div></main>
-<div id="playerContainer" class="player-container"><div class="player-box"><div id="playerTitle" class="player-title"></div>
-<video id="video" controls autoplay playsinline></video><div id="playerStatus" class="player-status"></div><div class="player-buttons">
-<button id="officialButton" class="player-btn official-btn">🌐 البث الرسمي</button><button class="player-btn close-player" onclick="closePlayer()">إغلاق</button>
-</div></div></div>
+
+<header>
+  <div class="logo">📺 القنوات الفضائية</div>
+  <div class="countries-title">🌍 اختر الدولة</div>
+  <div id="countries" class="countries"></div>
+</header>
+
+<main class="content">
+  <div id="countryName" class="country-name">جاري التحميل...</div>
+  <div id="channels" class="channels"></div>
+</main>
+
+<div id="playerContainer" class="xp-player-container">
+  <div class="xp-header">
+    <div id="playerTitle" class="xp-title">اسم القناة</div>
+    <button class="xp-close" onclick="closePlayer()">✕</button>
+  </div>
+  <div class="xp-video-wrapper">
+    <video id="video" controls autoplay playsinline></video>
+  </div>
+  <div id="playerStatus" class="xp-status">⏳ جاري الاتصال بالبث...</div>
+</div>
+
 <script>
 const BASE="https://iptv-org.github.io/iptv/countries/";
-const countries=[["sa","🇸🇦 السعودية"],["eg","🇪🇬 مصر"],["ae","🇦🇪 الإمارات"],["qa","🇶🇦 قطر"],["kw","🇰🇼 الكويت"],["bh","🇧🇭 البحرين"],["om","🇴🇲 عُمان"],["iq","🇮🇶 العراق"],["jo","🇯🇴 الأردن"],["lb","🇱🇧 لبنان"],["sy","🇸🇾 سوريا"],["ps","🇵🇸 فلسطين"],["ye","🇾🇪 اليمن"],["ma","🇲🇦 المغرب"],["dz","🇩🇿 الجزائر"],["tn","🇹🇳 تونس"],["ly","🇱🇾 ليبيا"],["sd","🇸🇩 السودان"],["so","🇸🇴 الصومال"],["de","🇩🇪 ألمانيا"],["fr","🇫🇷 فرنسا"],["gb","🇬🇧 بريطانيا"],["it","🇮🇹 إيطاليا"],["es","🇪🇸 إسبانيا"],["pt","🇵🇹 البرتغال"],["nl","🇳🇱 هولندا"],["be","🇧🇪 بلجيكا"],["at","🇦🇹 النمسا"],["ch","🇨🇭 سويسرا"],["se","🇸🇪 السويد"],["no","🇳🇴 النرويج"],["dk","🇩🇰 الدنمارك"],["fi","🇫🇮 فنلندا"],["pl","🇵🇱 بولندا"],["cz","🇨🇿 التشيك"],["gr","🇬🇷 اليونان"],["ro","🇷🇴 رومانيا"],["hu","🇭🇺 المجر"],["ua","🇺🇦 أوكرانيا"],["ru","🇷🇺 روسيا"],["us","🇺🇸 أمريكا"],["ca","🇨🇦 كندا"],["mx","🇲🇽 المكسيك"],["br","🇧🇷 البرازيل"],["ar","🇦🇷 الأرجنتين"],["cl","🇨🇱 تشيلي"],["co","🇨🇴 كولومبيا"],["tr","🇹🇷 تركيا"],["ir","🇮🇷 إيران"],["il","🇮🇱 إسرائيل"],["in","🇮🇳 الهند"],["pk","🇵🇰 باكستان"],["bd","🇧🇩 بنغلاديش"],["cn","🇨🇳 الصين"],["jp","🇯🇵 اليابان"],["kr","🇰🇷 كوريا الجنوبية"],["id","🇮🇩 إندونيسيا"],["my","🇲🇾 ماليزيا"],["th","🇹🇭 تايلاند"],["ph","🇵🇭 الفلبين"],["au","🇦🇺 أستراليا"],["nz","🇳🇿 نيوزيلندا"],["za","🇿🇦 جنوب أفريقيا"],["ng","🇳🇬 نيجيريا"],["ke","🇰🇪 كينيا"],["gh","🇬🇭 غانا"],["int","🌐 دولية"]];
-const officialRotana="https://www.rotana.net/ar/channels/live";const cache={};let hls=null,currentName="";
+const PROXIES = [
+  "", // محاولة مباشرة أولاً
+  "https://api.allorigins.win/raw?url=",
+  "https://corsproxy.io/?"
+];
+
+const countries=[
+  ["jo","🇯🇴 الأردن"],
+  ["sa","🇸🇦 السعودية"],
+  ["eg","🇪🇬 مصر"],
+  ["ae","🇦🇪 الإمارات"],
+  ["qa","🇶🇦 قطر"],
+  ["kw","🇰🇼 الكويت"],
+  ["bh","🇧🇭 البحرين"],
+  ["om","🇴🇲 عُمان"],
+  ["iq","🇮🇶 العراق"],
+  ["lb","🇱🇧 لبنان"],
+  ["sy","🇸🇾 سوريا"],
+  ["ps","🇵🇸 فلسطين"],
+  ["ye","🇾🇪 اليمن"],
+  ["ma","🇲🇦 المغرب"],
+  ["dz","🇩🇿 الجزائر"],
+  ["tn","🇹🇳 تونس"],
+  ["ly","🇱🇾 ليبيا"],
+  ["sd","🇸🇩 السودان"],
+  ["de","🇩🇪 ألمانيا"],
+  ["fr","🇫🇷 فرنسا"],
+  ["gb","🇬🇧 بريطانيا"],
+  ["us","🇺🇸 أمريكا"],
+  ["tr","🇹🇷 تركيا"]
+];
+
+const cache={};
+let hls=null;
+let currentUrls=[];
+let currentUrlIndex=0;
+
 const $=id=>document.getElementById(id);
+
 function esc(v){return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
-function showCountries(){countries.forEach(([code,name])=>{const b=document.createElement("button");b.className="country";b.textContent=name;b.onclick=()=>{document.querySelectorAll(".country").forEach(x=>x.classList.remove("active"));b.classList.add("active");loadCountry(code,name)};$("countries").appendChild(b)})}
-async function loadCountry(code,name){$("countryName").textContent=name;$("channels").innerHTML='<div class="loading">⏳ جاري تحميل القنوات...</div>';if(cache[code])return render(cache[code]);try{const r=await fetch(BASE+code+".m3u");if(!r.ok)throw Error();cache[code]=parse(await r.text());render(cache[code])}catch(e){$("channels").innerHTML='<div class="error">❌ تعذر تحميل القنوات<br><br>حاول مرة أخرى.</div>'}}
-function parse(t){const a=t.split(/\r?\n/),out=[];for(let i=0;i<a.length;i++){if(!a[i].trim().startsWith("#EXTINF"))continue;const info=a[i].trim(),p=info.indexOf(","),name=p>-1?info.slice(p+1).trim():"قناة",m=info.match(/tvg-logo="([^"]*)"/i),logo=m?m[1]:"";let url="";for(let j=i+1;j<a.length;j++){const x=a[j].trim();if(!x)continue;if(!x.startsWith("#")){url=x;i=j;break}}if(url)out.push({name,logo,url})}return out}
-function render(list){$("channels").innerHTML="";if(!list.length){$("channels").innerHTML='<div class="error">لا توجد قنوات متاحة لهذه الدولة.</div>';return}list.forEach(c=>{const d=document.createElement("div");d.className="channel";d.innerHTML=c.logo?`<img src="${esc(c.logo)}" loading="lazy" onerror="this.style.display='none'"><div class="channel-name">${esc(c.name)}</div>`:`<div style="height:90px;display:flex;align-items:center;justify-content:center;font-size:35px">📺</div><div class="channel-name">${esc(c.name)}</div>`;d.onclick=()=>play(c.url,c.name);$("channels").appendChild(d)})}
-function isRotana(n){return /rotana|روتانا/i.test(n)}
-function play(url,name){currentName=name||"القناة";$("playerTitle").textContent=currentName;$("playerContainer").classList.add("show");$("officialButton").classList.toggle("show",isRotana(currentName));$("officialButton").onclick=()=>window.open(officialRotana,"_blank","noopener,noreferrer");start(url)}
-function start(url){if(hls){hls.destroy();hls=null}$("playerStatus").textContent="⏳ جاري الاتصال بالبث...";const v=$("video");if(v.canPlayType("application/vnd.apple.mpegurl")){v.src=url;v.play().then(()=>$("playerStatus").textContent="🟢 البث يعمل").catch(()=>{});v.onerror=fail;return}if(window.Hls&&Hls.isSupported()){hls=new Hls({enableWorker:true,lowLatencyMode:true,maxBufferLength:30});hls.loadSource(url);hls.attachMedia(v);hls.on(Hls.Events.MANIFEST_PARSED,()=>v.play().then(()=>$("playerStatus").textContent="🟢 البث يعمل").catch(()=>{}));hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal)fail()})}else $("playerStatus").textContent="❌ المتصفح لا يدعم HLS."}
-function fail(){if(hls){hls.destroy();hls=null}$("playerStatus").textContent=isRotana(currentName)?"❌ البث غير متاح — يمكنك استخدام البث الرسمي.":"❌ البث الحالي غير متاح."}
-function closePlayer(){if(hls){hls.destroy();hls=null}const v=$("video");v.pause();v.removeAttribute("src");v.load();$("playerContainer").classList.remove("show")}
-showCountries();const first=document.querySelector(".country");first.classList.add("active");loadCountry(countries[0][0],countries[0][1]);
-if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
-</script></body></html>
+
+function showCountries(){
+  countries.forEach(([code,name])=>{
+    const b=document.createElement("button");
+    b.className="country";
+    b.textContent=name;
+    b.onclick=()=>{
+      document.querySelectorAll(".country").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      loadCountry(code,name);
+    };
+    $("countries").appendChild(b);
+  });
+}
+
+// دالة تجلب الملف مع المحاولة عبر وسائط مختلفة
+async function fetchPlaylist(url) {
+  for (let proxy of PROXIES) {
+    try {
+      const fullUrl = proxy ? proxy + encodeURIComponent(url) : url;
+      const r = await fetch(fullUrl);
+      if (r.ok) {
+        const text = await r.text();
+        if (text && text.includes("#EXTM3U")) return text;
+      }
+    } catch (e) {
+      continue;
+    }
+  }
+  throw new Error("فشل الجلب");
+}
+
+async function loadCountry(code,name){
+  $("countryName").textContent=name;
+  $("channels").innerHTML='<div class="loading">⏳ جاري تحميل كافة قنوات '+name+'...</div>';
+  
+  if(cache[code]) return render(cache[code]);
+  
+  const targetUrl = BASE + code + ".m3u";
+
+  try{
+    const text = await fetchPlaylist(targetUrl);
+    cache[code] = parse(text);
+    render(cache[code]);
+  }catch(e){
+    $("channels").innerHTML='<div class="error">❌ تعذر تحميل القنوات<br><br>تأكد من الاتصال بالإنترنت وأعد المحاولة.</div>';
+  }
+}
+
+function parse(t){
+  const a=t.split(/\r?\n/),out=[];
+  for(let i=0;i<a.length;i++){
+    if(!a[i].trim().startsWith("#EXTINF")) continue;
+    const info=a[i].trim(),p=info.indexOf(","),name=p>-1?info.slice(p+1).trim():"قناة";
+    const m=info.match(/tvg-logo="([^"]*)"/i),logo=m?m[1]:"";
+    let url="";
+    for(let j=i+1;j<a.length;j++){
+      const x=a[j].trim();
+      if(!x) continue;
+      if(!x.startsWith("#")){url=x;i=j;break;}
+    }
+    if(url) out.push({name, logo, urls: [url]});
+  }
+  return out;
+}
+
+function render(list){
+  $("channels").innerHTML="";
+  if(!list.length){
+    $("channels").innerHTML='<div class="error">لا توجد قنوات متاحة حالياً.</div>';
+    return;
+  }
+  list.forEach(c=>{
+    const d=document.createElement("div");
+    d.className="channel";
+    d.innerHTML=c.logo?`<img src="${esc(c.logo)}" loading="lazy" onerror="this.style.display='none'"><div class="channel-name">${esc(c.name)}</div>`:`<div style="height:85px;display:flex;align-items:center;justify-content:center;font-size:35px">📺</div><div class="channel-name">${esc(c.name)}</div>`;
+    d.onclick=()=>play(c.urls,c.name);
+    $("channels").appendChild(d);
+  });
+}
+
+function play(urls,name){
+  $("playerTitle").textContent=name||"البث المباشر";
+  $("playerContainer").classList.add("show");
+  currentUrls = Array.isArray(urls) ? urls : [urls];
+  currentUrlIndex = 0;
+  startStreamIndex(currentUrlIndex);
+}
+
+function startStreamIndex(index){
+  if(index >= currentUrls.length){
+    $("playerStatus").textContent = "❌ السيرفر متوقف حالياً.";
+    return;
+  }
+
+  const url = currentUrls[index];
+  if(hls){hls.destroy();hls=null;}
+  $("playerStatus").textContent = index > 0 ? "🔄 جاري الاتصال بسيرفر بديل..." : "⏳ جاري الاتصال بالبث...";
+  
+  const v=$("video");
+
+  if(Hls.isSupported()){
+    hls=new Hls({enableWorker:true,lowLatencyMode:true,manifestLoadingTimeOut:8000});
+    hls.loadSource(url);
+    hls.attachMedia(v);
+    hls.on(Hls.Events.MANIFEST_PARSED,()=>v.play().then(()=>$("playerStatus").textContent="🟢 البث يعمل").catch(()=>{}));
+    hls.on(Hls.Events.ERROR,(e,d)=>{
+      if(d.fatal){
+        currentUrlIndex++;
+        startStreamIndex(currentUrlIndex);
+      }
+    });
+  } else if(v.canPlayType("application/vnd.apple.mpegurl")){
+    v.src=url;
+    v.play().then(()=>$("playerStatus").textContent="🟢 البث يعمل").catch(()=>{});
+    v.onerror=()=>{
+      currentUrlIndex++;
+      startStreamIndex(currentUrlIndex);
+    };
+  } else {
+    $("playerStatus").textContent="❌ المشغل غير مدعوم على هذا الجهاز.";
+  }
+}
+
+function closePlayer(){
+  if(hls){hls.destroy();hls=null;}
+  const v=$("video");
+  v.pause();
+  v.removeAttribute("src");
+  v.load();
+  $("playerContainer").classList.remove("show");
+}
+
+showCountries();
+const first=document.querySelector(".country");
+if(first){
+  first.classList.add("active");
+  loadCountry(countries[0][0],countries[0][1]);
+}
+
+if("serviceWorker"in navigator) navigator.serviceWorker.register("./sw.js").catch(()=>{});
+</script>
+</body>
+</html>
